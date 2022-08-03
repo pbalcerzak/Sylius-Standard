@@ -33,3 +33,87 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+        
+    App\Context\TimeBasedChannelContext:
+        arguments:
+            - '@sylius.repository.channel'
+            - '@App\DateTime\Clock'
+        tags:
+            - { name: sylius.context.channel, priority: 1000 }
+    
+    App\ShippingCalculator\WeightBasedShippingCalculator:
+        tags:
+            -
+              {
+                  name: sylius.shipping_calculator,
+                  calculator: 'weight_based',
+                  form_type: 'App\Form\Type\WeightBasedShippingConfigurationType',
+                  label: 'Weight-based',
+              }
+
+    App\Menu\AdminMainMenuListener:
+        tags:
+            - { name: kernel.event_listener, event: sylius.menu.admin.main, method: addSupplierMenu }
+                
+    App\Form\Type\SupplierType:
+        arguments:
+            - '%app.model.supplier.class%'
+            
+    App\Notifier\SupplierTrustNotifierInterface:
+        class: App\Notifier\EmailSupplierTrustNotifier
+        public: true
+        
+    App\Listener\ReviewCreationListener:
+        arguments:
+            - "@sm.factory"
+        tags:
+            - { name: kernel.event_listener, event: sylius.product_review.pre_create, method: acceptForTrustedAuthor}
+
+    App\Factory\ProductFactory:
+        decorates: sylius.factory.product
+        arguments:
+            - '@App\Factory\ProductFactory.inner'
+                
+    App\Assigner\ShipmentCodeAssignerInterface:
+        class: App\Assigner\ShipmentCodeAssigner
+        arguments:
+            - '@App\Provider\ShipmentCodeProviderInterface'
+            - '@sylius.manager.shipment'
+        public: true
+        
+    App\Controller\Actions\QuickCheckoutAction:
+        arguments:
+            - '@sylius.repository.product_variant'
+            - '@sylius.factory.order'
+            - '@sylius.factory.order_item'
+            - '@sylius.order_item_quantity_modifier'
+            - '@sylius.context.shopper'
+            - '@sm.factory'
+            - '@sylius.manager.order'
+            - '@router'
+        public: true
+        
+    App\Promotion\Rule\BirthDayPromotionRuleChecker:
+        tags:
+            - {
+                  name: sylius.promotion_rule_checker,
+                  type: birthday,
+                  label: "app.ui.customer_birthday",
+                  form_type: Symfony\Component\Form\Extension\Core\Type\FormType
+            }
+    
+    App\Promotion\Action\FreeOrderPromotionActionCommand:
+        arguments:
+            - '@sylius.factory.adjustment'
+        tags:
+            - {
+                name: sylius.promotion_action,
+                type: free_order,
+                label: "app.ui.free_order",
+                form_type: Symfony\Component\Form\Extension\Core\Type\FormType
+            }
+
+    App\Applicator\TrustSupplierApplicator:
+        arguments:
+            - '@sm.factory'
+        public: true

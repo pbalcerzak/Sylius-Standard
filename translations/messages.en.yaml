@@ -1,0 +1,8 @@
+app:
+    ui:
+        create_t_shirt_product: 'Create T-shirt'
+        customer_birthday: 'Customer Birthday'
+        free_order: 'Free Order'
+        supplier: 'Supplier'
+        suppliers: 'Suppliers'
+        trust: 'Trust'

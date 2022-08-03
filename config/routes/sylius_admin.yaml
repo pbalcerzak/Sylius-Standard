@@ -5,3 +5,44 @@ sylius_admin:
 sylius_paypal_admin:
     resource: "@SyliusPayPalPlugin/Resources/config/admin_routing.yml"
     prefix: '/%sylius_admin.path_name%'
+    
+app_supplier:
+    resource: |
+        alias: app.supplier
+        except: ['show']
+        section: admin
+        templates: "@SyliusAdmin\\Crud"
+        grid: app_admin_supplier
+    type: sylius.resource
+    prefix: /admin
+    
+app_admin_supplier_trust:
+    path: /admin/supplier/{id}/trust
+    methods: [PUT]
+    defaults:
+        _controller: app.controller.supplier:applyStateMachineTransitionAction
+        _sylius:
+            state_machine:
+                graph: app_supplier
+                transition: trust
+            redirect: referer
+            flash: app.ui.supplier_trusted
+            
+app_admin_product_create_t_shirt:
+    path: /admin/products/new/t-shirt
+    methods: [GET, POST]
+    defaults:
+        _controller: sylius.controller.product:createAction
+        _sylius:
+            section: admin
+            permission: true
+            factory:
+                method: createTShirt
+            template: "@SyliusAdmin/Crud/create.html.twig"
+            redirect: sylius_admin_product_update
+            vars:
+                subheader: sylius.ui.manage_your_product_catalog
+                templates:
+                    form: "@SyliusAdmin/Product/_form.html.twig"
+                route:
+                    name: sylius_admin_product_create_simple

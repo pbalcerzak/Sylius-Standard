@@ -1,0 +1,26 @@
+winzou_state_machine:
+    app_supplier:
+        class: "%app.model.supplier.class%"
+        property_path: state
+        graph: app_supplier
+        state_machine_class: "%sylius.state_machine.class%"
+        states:
+            new: ~
+            trusted: ~
+        transitions:
+            trust:
+                from: [new]
+                to: trusted
+        callbacks:
+            after:
+                notify:
+                    on: ['trust']
+                    do: ['@App\Notifier\SupplierTrustNotifierInterface', 'notify']
+                    args: ['object']
+    sylius_shipment:
+        callbacks:
+            after:
+                assign_shipment_code:
+                    on: [ "ship" ]
+                    do: [ '@App\Assigner\ShipmentCodeAssignerInterface', 'assign' ]
+                    args: [ "object" ]

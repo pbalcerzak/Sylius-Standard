@@ -1,0 +1,14 @@
+{
+    "name": "bitbag/academy-theme",
+    "authors": [
+        {
+            "name": "Bitbag",
+            "email": "piotr.balcerzak@bitbag.pl"
+        }
+    ],
+    "extra": {
+        "sylius-theme": {
+            "title": "Academy theme"
+        }
+    }
+}

@@ -1,0 +1,9 @@
+sylius_ui:
+    events:
+        sylius.shop.product.show.right_sidebar:
+            blocks:
+                reviews:
+                    enabled: false
+                quick_checkout:
+                    template: 'Shop/quickCheckout.html.twig'
+                    priority: 0

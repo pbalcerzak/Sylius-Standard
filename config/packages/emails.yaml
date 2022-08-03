@@ -1,0 +1,8 @@
+sylius_mailer:
+    sender:
+        name: SyliusAcademy test
+        address: test@example.com
+    emails:
+        app_supplier_trusted:
+            subject: "You've just been trusted!"
+            template: "Supplier/Email/supplier_trusted.html.twig"
